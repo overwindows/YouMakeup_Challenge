@@ -1,3 +1,13 @@
+from mmn.utils.miscellaneous import mkdir, save_config
+from mmn.utils.logger import setup_logger
+from mmn.utils.comm import synchronize, get_rank
+from mmn.utils.checkpoint import MmnCheckpointer
+from mmn.modeling import build_model
+from mmn.engine.trainer import do_train
+from mmn.engine.inference import inference
+from mmn.config import cfg
+from mmn.data import make_data_loader
+import sys
 import argparse
 import os
 import random
@@ -5,18 +15,8 @@ import torch
 from torch import optim
 import torch.multiprocessing as mp
 mp.set_sharing_strategy('file_system')
-import sys
 sys.path.append('./')
-from mmn.data import make_data_loader
-from mmn.config import cfg
-from mmn.engine.inference import inference
-from mmn.engine.trainer import do_train
-from mmn.modeling import build_model
-from mmn.utils.checkpoint import MmnCheckpointer
-from mmn.utils.comm import synchronize, get_rank
 #from mmn.utils.imports import import_file
-from mmn.utils.logger import setup_logger
-from mmn.utils.miscellaneous import mkdir, save_config
 
 
 def train(cfg, local_rank, distributed):
@@ -30,7 +30,8 @@ def train(cfg, local_rank, distributed):
             broadcast_buffers=False, find_unused_parameters=True
         )
     learning_rate = cfg.SOLVER.LR * 1.0
-    data_loader = make_data_loader(cfg, is_train=True, is_distributed=distributed)
+    data_loader = make_data_loader(
+        cfg, is_train=True, is_distributed=distributed)
 
     bert_params = []
     base_params = []
@@ -42,22 +43,28 @@ def train(cfg, local_rank, distributed):
     param_dict = {'bert': bert_params, 'base': base_params}
     optimizer = optim.AdamW([{'params': base_params},
                             {'params': bert_params, 'lr': learning_rate * 0.1}], lr=learning_rate, betas=(0.9, 0.99), weight_decay=1e-5)
-    scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=cfg.SOLVER.MILESTONES, gamma=0.1)
+    scheduler = optim.lr_scheduler.MultiStepLR(
+        optimizer, milestones=cfg.SOLVER.MILESTONES, gamma=0.1)
     output_dir = cfg.OUTPUT_DIR
     save_to_disk = get_rank() == 0
-    checkpointer = MmnCheckpointer(cfg, model, optimizer, scheduler, output_dir, save_to_disk)
+    checkpointer = MmnCheckpointer(
+        cfg, model, optimizer, scheduler, output_dir, save_to_disk)
     arguments = {"epoch": 1}
 
     if cfg.SOLVER.RESUME:
         arguments = {"epoch": cfg.SOLVER.RESUME_EPOCH}
         if cfg.DATASETS.NAME == "activitynet":
-            weight_path = './outputs/%s_activitynet_64x64_k9l4/%s_model_%de.pth' % (cfg.MODEL.MMN.FEAT2D.NAME, cfg.MODEL.MMN.FEAT2D.NAME, cfg.SOLVER.RESUME_EPOCH - 1)
+            weight_path = './outputs/%s_activitynet_64x64_k9l4/%s_model_%de.pth' % (
+                cfg.MODEL.MMN.FEAT2D.NAME, cfg.MODEL.MMN.FEAT2D.NAME, cfg.SOLVER.RESUME_EPOCH - 1)
         elif cfg.DATASETS.NAME == "tacos":
-            weight_path = './outputs/%s_tacos_128x128_k5l8/%s_model_%de.pth' % (cfg.MODEL.MMN.FEAT2D.NAME, cfg.MODEL.MMN.FEAT2D.NAME, cfg.SOLVER.RESUME_EPOCH - 1)
+            weight_path = './outputs/%s_tacos_128x128_k5l8/%s_model_%de.pth' % (
+                cfg.MODEL.MMN.FEAT2D.NAME, cfg.MODEL.MMN.FEAT2D.NAME, cfg.SOLVER.RESUME_EPOCH - 1)
         elif cfg.DATASETS.NAME == "charades":
-            weight_path = './outputs/%s_charades_16x16_k5l8/%s_model_%de.pth' % (cfg.MODEL.MMN.FEAT2D.NAME, cfg.MODEL.MMN.FEAT2D.NAME, cfg.SOLVER.RESUME_EPOCH - 1)
+            weight_path = './outputs/%s_charades_16x16_k5l8/%s_model_%de.pth' % (
+                cfg.MODEL.MMN.FEAT2D.NAME, cfg.MODEL.MMN.FEAT2D.NAME, cfg.SOLVER.RESUME_EPOCH - 1)
         else:
-            weight_path = './outputs/pool_makeup_128x128/pool_model_%de.pth' % (cfg.SOLVER.RESUME_EPOCH - 1)
+            weight_path = './outputs/pool_makeup_128x128/pool_model_%de.pth' % (
+                cfg.SOLVER.RESUME_EPOCH - 1)
         weight_file = torch.load(weight_path, map_location=torch.device("cpu"))
         model.load_state_dict(weight_file.pop("model"))
         for _ in range(1, cfg.SOLVER.RESUME_EPOCH):
@@ -65,7 +72,8 @@ def train(cfg, local_rank, distributed):
 
     test_period = cfg.SOLVER.TEST_PERIOD
     if test_period > 0:
-        data_loader_val = make_data_loader(cfg, is_train=False, is_distributed=distributed, is_for_period=True)
+        data_loader_val = make_data_loader(
+            cfg, is_train=False, is_distributed=distributed, is_for_period=True)
     else:
         data_loader_val = None
 
@@ -93,7 +101,8 @@ def run_test(cfg, model, distributed):
         model = model.module
     torch.cuda.empty_cache()
     dataset_names = cfg.DATASETS.TEST
-    data_loaders_val = make_data_loader(cfg, is_train=False, is_distributed=distributed)
+    data_loaders_val = make_data_loader(
+        cfg, is_train=False, is_distributed=distributed)
     for dataset_name, data_loader_val in zip(dataset_names, data_loaders_val):
         inference(
             cfg,
@@ -115,7 +124,7 @@ def main():
         help="path to config file",
         type=str,
     )
-    parser.add_argument("--local_rank", type=int, default=0)
+    # parser.add_argument("--local_rank", type=int, default=0)
     parser.add_argument(
         "--skip-test",
         dest="skip_test",
@@ -136,9 +145,14 @@ def main():
     torch.cuda.manual_seed_all(seed)
     torch.backends.cudnn.deterministic = True
 
-    num_gpus = int(os.environ["WORLD_SIZE"]) if "WORLD_SIZE" in os.environ else 1
+    args.world_size = int(os.environ['WORLD_SIZE'])
+    args.local_rank = int(os.environ['LOCAL_RANK'])
+    args.rank = int(os.environ["RANK"])
+
+    num_gpus = int(os.environ["WORLD_SIZE"]
+                   ) if "WORLD_SIZE" in os.environ else 1
     args.distributed = num_gpus > 1
-    
+
     if args.distributed:
         torch.cuda.set_device(args.local_rank)
         torch.distributed.init_process_group(
@@ -163,12 +177,11 @@ def main():
         config_str = "\n" + cf.read()
         logger.info(config_str)
     logger.info("Running with config:\n{}".format(cfg))
-
+    # print("local_rank: {}".format(args.local_rank))
     output_config_path = os.path.join(cfg.OUTPUT_DIR, 'config.yml')
     logger.info("Saving config into: {}".format(output_config_path))
     # save overloaded model config in the output directory
     save_config(cfg, output_config_path)
-    print(args.local_rank)
     model = train(cfg, args.local_rank, args.distributed)
 
     if not args.skip_test:
@@ -176,6 +189,6 @@ def main():
 
 
 if __name__ == "__main__":
-    #mp.set_start_method('spawn')
+    # mp.set_start_method('spawn')
     #
     main()
