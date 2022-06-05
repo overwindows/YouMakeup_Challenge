@@ -6,7 +6,7 @@ from transformers import DistilBertModel
 class DistilBert(nn.Module):
     def __init__(self, joint_space_size, dataset):
         super().__init__()
-        self.bert = DistilBertModel.from_pretrained('distilbert-base-uncased')
+        self.bert = DistilBertModel.from_pretrained('/MTVG/distilbert-base-uncased')
         self.fc_out1 = nn.Linear(768, joint_space_size)
         self.fc_out2 = nn.Linear(768, joint_space_size)
         self.dataset = dataset

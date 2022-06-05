@@ -44,7 +44,7 @@ MODEL:
     TEXT_ENCODER:
       NAME: BERT
 OUTPUT_DIR: outputs/pool_makeup_i3d
-PATHS_CATALOG: /data1/wdmmsyf/ground/MNN/mmn/mmn/config/paths_catalog.py
+PATHS_CATALOG: /apdcephfs/private_chewu/Youmakeup_Challenge2022/MTVG/mmn/config/paths_catalog.py
 SOLVER:
   BATCH_SIZE: 8
   CHECKPOINT_PERIOD: 1

@@ -42,7 +42,7 @@ python ./dataset/makeup/prepare_data.py
 Training
 
 ```bash
-./scripts/makeup_train.sh
+sh run_docker.sh mirrors.tencent.com/minerva/pytorch:MTVG "sh scripts/makeup_train.sh"
 ```
 
 Evaluation
