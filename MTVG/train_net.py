@@ -23,6 +23,7 @@ def train(cfg, local_rank, distributed):
     model = build_model(cfg)
     device = torch.device(cfg.MODEL.DEVICE)
     model.to(device)
+    assert distributed
     if distributed:
         model = torch.nn.parallel.DistributedDataParallel(
             model, device_ids=[local_rank], output_device=local_rank,
@@ -63,7 +64,7 @@ def train(cfg, local_rank, distributed):
             weight_path = './outputs/%s_charades_16x16_k5l8/%s_model_%de.pth' % (
                 cfg.MODEL.MMN.FEAT2D.NAME, cfg.MODEL.MMN.FEAT2D.NAME, cfg.SOLVER.RESUME_EPOCH - 1)
         else:
-            weight_path = './outputs/pool_makeup_128x128/pool_model_%de.pth' % (
+            weight_path = './outputs/pool_makeup_i3d/pool_model_%de.pth' % (
                 cfg.SOLVER.RESUME_EPOCH - 1)
         weight_file = torch.load(weight_path, map_location=torch.device("cpu"))
         model.load_state_dict(weight_file.pop("model"))
@@ -124,7 +125,7 @@ def main():
         help="path to config file",
         type=str,
     )
-    # parser.add_argument("--local_rank", type=int, default=0)
+    parser.add_argument("--local_rank", type=int, default=0)
     parser.add_argument(
         "--skip-test",
         dest="skip_test",
@@ -145,9 +146,9 @@ def main():
     torch.cuda.manual_seed_all(seed)
     torch.backends.cudnn.deterministic = True
 
-    args.world_size = int(os.environ['WORLD_SIZE'])
-    args.local_rank = int(os.environ['LOCAL_RANK'])
-    args.rank = int(os.environ["RANK"])
+    # args.world_size = int(os.environ['WORLD_SIZE'])
+    # args.local_rank = int(os.environ['LOCAL_RANK'])
+    # args.rank = int(os.environ["RANK"])
 
     num_gpus = int(os.environ["WORLD_SIZE"]
                    ) if "WORLD_SIZE" in os.environ else 1

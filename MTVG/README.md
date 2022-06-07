@@ -48,7 +48,7 @@ sh run_docker.sh mirrors.tencent.com/minerva/pytorch:MTVG "sh scripts/makeup_tra
 Evaluation
 
 ```
-./scripts/eval.sh
+sh run_docker.sh mirrors.tencent.com/minerva/pytorch:MTVG  "sh scripts/eval.sh"
 ```
 
 You can verify the config files or bash files to select the appropriate settings.
