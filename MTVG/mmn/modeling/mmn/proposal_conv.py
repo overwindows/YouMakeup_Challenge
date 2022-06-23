@@ -47,7 +47,7 @@ class ProposalConv(nn.Module):
 
 
 def build_proposal_conv(cfg, mask2d):
-    input_size = cfg.MODEL.MMN.FEATPOOL.HIDDEN_SIZE
+    input_size = cfg.MODEL.MMN.FEATPOOL.HIDDEN_SIZE*2
     hidden_size = cfg.MODEL.MMN.PREDICTOR.HIDDEN_SIZE
     kernel_size = cfg.MODEL.MMN.PREDICTOR.KERNEL_SIZE
     num_stack_layers = cfg.MODEL.MMN.PREDICTOR.NUM_STACK_LAYERS

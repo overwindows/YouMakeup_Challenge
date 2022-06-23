@@ -14,10 +14,11 @@ class BatchCollator(object):
     def __call__(self, batch):
         transposed_batch = list(zip(*batch))
         # [xxx, xxx, xxx], [xxx, xxx, xxx] ......
-        feats, queries, wordlens, ious2d, moments, num_sentence, idxs = transposed_batch
+        feats, feats_c3d, queries, wordlens, ious2d, moments, num_sentence, idxs = transposed_batch
 
         return TLGBatch(
             feats=torch.stack(feats).float(),
+            feats_c3d=torch.stack(feats_c3d).float(),
             queries=queries,
             wordlens=wordlens,
             all_iou2d=ious2d,

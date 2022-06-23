@@ -1,7 +1,7 @@
 import torch
 from torch import nn
 from torch.functional import F
-from .featpool import build_featpool  # downsample 1d temporal features to desired length
+from .featpool import build_featpool, build_featpool_c3d  # downsample 1d temporal features to desired length
 from .feat2d import build_feat2d  # use MaxPool1d/Conv1d to generate 2d proposal-level feature map from 1d temporal features
 from .loss import build_contrastive_loss
 from .loss import build_bce_loss
@@ -14,6 +14,7 @@ class MMN(nn.Module):
         super(MMN, self).__init__()
         self.only_iou_loss_epoch = cfg.SOLVER.ONLY_IOU
         self.featpool = build_featpool(cfg) 
+        self.featpool_c3d = build_featpool_c3d(cfg)
         self.feat2d = build_feat2d(cfg)
         self.contrastive_loss = build_contrastive_loss(cfg, self.feat2d.mask2d)
         self.iou_score_loss = build_bce_loss(cfg, self.feat2d.mask2d)
@@ -36,6 +37,10 @@ class MMN(nn.Module):
             assert iou.size(0) == sent.size(0)
             assert iou.size(0) == batches.num_sentence[idx]
         feats = self.featpool(batches.feats)  # from pre_num_clip to num_clip with overlapped average pooling, e.g., 256 -> 128
+        feats_c3d = self.featpool_c3d(batches.feats_c3d)
+        # print(feats.size(), feats_c3d.size())
+        feats = torch.cat((feats,feats_c3d), 1)
+        # print(feats.size())
         map2d = self.feat2d(feats)  # use MaxPool1d to generate 2d proposal-level feature map from 1d temporal features
         map2d, map2d_iou = self.proposal_conv(map2d)
         sent_feat, sent_feat_iou = self.text_encoder(batches.queries, batches.wordlens)

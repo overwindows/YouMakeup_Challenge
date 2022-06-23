@@ -1,24 +1,28 @@
 """Centralized catalog of paths."""
 import os
 
+
 class DatasetCatalog(object):
     DATA_DIR = ""
 
     DATASETS = {
-        "makeup_train":{
+        "makeup_train": {
             "video_dir": "./dataset/makeup/videos",
             "ann_file": "./dataset/makeup/makeup_train.json",
             "feat_file": "./dataset/makeup/makeup_i3d_rgb_stride_1s.hdf5",
+            "feat_c3d": "./dataset/makeup/makeup_c3d_rgb_stride_1s.hdf5",
         },
-        "makeup_val":{
+        "makeup_val": {
             "video_dir": "./dataset/makeup/videos",
             "ann_file": "./dataset/makeup/makeup_val.json",
             "feat_file": "./dataset/makeup/makeup_i3d_rgb_stride_1s.hdf5",
+            "feat_c3d":  "./dataset/makeup/makeup_c3d_rgb_stride_1s.hdf5",
         },
-        "makeup_test":{
+        "makeup_test": {
             "video_dir": "./dataset/makeup/videos",
             "ann_file": "./dataset/makeup/makeup_test.json",
             "feat_file": "./dataset/makeup/makeup_i3d_rgb_stride_1s.hdf5",
+            "feat_c3d":  "./dataset/makeup/makeup_c3d_rgb_stride_1s.hdf5"
         }
     }
 
@@ -27,7 +31,7 @@ class DatasetCatalog(object):
         data_dir = DatasetCatalog.DATA_DIR
         attrs = DatasetCatalog.DATASETS[name]
         args = dict(
-            #root=os.path.join(data_dir, attrs["video_dir"]),
+            feat_c3d=os.path.join(data_dir, attrs["feat_c3d"]),
             ann_file=os.path.join(data_dir, attrs["ann_file"]),
             feat_file=os.path.join(data_dir, attrs["feat_file"]),
         )
@@ -38,18 +42,17 @@ class DatasetCatalog(object):
             )
         elif "activitynet" in name:
             return dict(
-                factory = "ActivityNetDataset",
-                args = args
+                factory="ActivityNetDataset",
+                args=args
             )
         elif "charades" in name:
             return dict(
-                factory = "CharadesDataset",
-                args = args
+                factory="CharadesDataset",
+                args=args
             )
         elif "makeup" in name:
             return dict(
-                factory = "MakeupDataset",
-                args = args
+                factory="MakeupDataset",
+                args=args
             )
         raise RuntimeError("Dataset not available: {}".format(name))
-

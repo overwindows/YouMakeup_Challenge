@@ -23,7 +23,7 @@ def train(cfg, local_rank, distributed):
     model = build_model(cfg)
     device = torch.device(cfg.MODEL.DEVICE)
     model.to(device)
-    assert distributed
+    # assert distributed
     if distributed:
         model = torch.nn.parallel.DistributedDataParallel(
             model, device_ids=[local_rank], output_device=local_rank,
@@ -153,7 +153,7 @@ def main():
     num_gpus = int(os.environ["WORLD_SIZE"]
                    ) if "WORLD_SIZE" in os.environ else 1
     args.distributed = num_gpus > 1
-    assert args.distributed
+    # assert args.distributed
     if args.distributed:
         torch.cuda.set_device(args.local_rank)
         torch.distributed.init_process_group(

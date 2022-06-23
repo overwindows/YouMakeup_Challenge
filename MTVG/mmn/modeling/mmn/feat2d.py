@@ -81,7 +81,8 @@ class SparseConv(nn.Module):
 def build_feat2d(cfg):
     pooling_counts = cfg.MODEL.MMN.FEAT2D.POOLING_COUNTS  # [15,8,8] anet, [15] charades
     num_clips = cfg.MODEL.MMN.NUM_CLIPS  # 64 anet, 16 charades
-    hidden_size = cfg.MODEL.MMN.FEATPOOL.HIDDEN_SIZE  # 512
+    hidden_size = cfg.MODEL.MMN.FEATPOOL.HIDDEN_SIZE*2  # 512
+    assert hidden_size == 1024
     if cfg.MODEL.MMN.FEAT2D.NAME == "conv":
         return SparseConv(pooling_counts, num_clips, hidden_size)
     elif cfg.MODEL.MMN.FEAT2D.NAME == "pool":

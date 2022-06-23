@@ -64,7 +64,7 @@ def do_train(
                 param.requires_grad_(False)
         else:
             for param in param_dict['bert']:
-                param.requires_grad_(False)
+                param.requires_grad_(True)
         logger.info("Start epoch {}. base_lr={:.1e}, bert_lr={:.1e}, bert.requires_grad={}".format(epoch, optimizer.param_groups[0]["lr"], optimizer.param_groups[1]["lr"], str(param_dict['bert'][0].requires_grad)))
         if epoch <= cfg.SOLVER.ONLY_IOU:
             logger.info("Using all losses")

@@ -94,7 +94,11 @@ def video2feats(feat_file, vids, num_pre_clips, dataset_name):
 def get_vid_feat(feat_file, vid, num_pre_clips, dataset_name):
     assert exists(feat_file), feat_file
     with h5py.File(feat_file, 'r') as f:
-        feat = f[vid]['i3d_rgb_features'][:]
+        if dataset_name == 'i3d':
+            feat = f[vid]['i3d_rgb_features'][:]
+        else:
+            assert dataset_name == 'c3d'
+            feat = f[vid]['c3d_rgb_features'][:]
         feat = F.normalize(torch.from_numpy(feat), dim=1)
 
     return avgfeats(feat, num_pre_clips)

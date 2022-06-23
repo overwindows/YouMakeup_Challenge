@@ -7,12 +7,15 @@ from transformers import DistilBertTokenizer
 
 class MakeupDataset(torch.utils.data.Dataset):
 
-    def __init__(self, ann_file, feat_file, num_pre_clips, num_clips):
+    def __init__(self, ann_file, feat_file, feat_c3d, num_pre_clips, num_clips):
         super(MakeupDataset, self).__init__()
         print("*********")
         print(feat_file)
+        print(feat_c3d)
         print("*********")
         self.feat_file = feat_file
+        self.feat_c3d = feat_c3d
+
         self.num_pre_clips = num_pre_clips
         with open(ann_file,'r') as f:
             annos = json.load(f)
@@ -58,13 +61,13 @@ class MakeupDataset(torch.utils.data.Dataset):
         #self.feats = video2feats(feat_file, annos.keys(), num_pre_clips, dataset_name="tacos")
 
     def __getitem__(self, idx):
-        # feat = self.feats[self.annos[idx]['vid']]
-        feat = get_vid_feat(self.feat_file, self.annos[idx]['vid'], self.num_pre_clips, dataset_name="makeup")
+        feat_c3d = get_vid_feat(self.feat_c3d, self.annos[idx]['vid'], self.num_pre_clips, dataset_name="c3d")
+        feat = get_vid_feat(self.feat_file, self.annos[idx]['vid'], self.num_pre_clips, dataset_name="i3d")
         query = self.annos[idx]['query']
         wordlen = self.annos[idx]['wordlen']
         iou2d = self.annos[idx]['iou2d']
         moment = self.annos[idx]['moment']
-        return feat, query, wordlen, iou2d, moment, len(self.annos[idx]['sentence']),idx
+        return feat, feat_c3d, query, wordlen, iou2d, moment, len(self.annos[idx]['sentence']),idx
 
     def __len__(self):
         return len(self.annos)
