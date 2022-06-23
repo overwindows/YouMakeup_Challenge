@@ -74,6 +74,7 @@ def do_train(
             writer_count += 1
             iteration += 1
             batches = batches.to(device)
+            # print(batches.feats.size(), dist.get_rank())
             optimizer.zero_grad()
             contr_weight = cfg.MODEL.MMN.LOSS.CONTRASTIVE_WEIGHT
             loss_vid, loss_sent, loss_iou = model(batches, cur_epoch=epoch)
@@ -86,7 +87,9 @@ def do_train(
             else:
                 loss += loss_iou
                 loss += (loss_sent + loss_vid) * 0.01
+            
             loss.backward()
+            # print(loss, dist.get_rank())
             if max_norm > 0:
                 torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm)
             optimizer.step()

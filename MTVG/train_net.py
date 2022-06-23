@@ -28,7 +28,7 @@ def train(cfg, local_rank, distributed):
         model = torch.nn.parallel.DistributedDataParallel(
             model, device_ids=[local_rank], output_device=local_rank,
             # this should be removed if we update BatchNorm stats
-            broadcast_buffers=False, find_unused_parameters=True
+            broadcast_buffers=True, find_unused_parameters=True
         )
     learning_rate = cfg.SOLVER.LR * 1.0
     data_loader = make_data_loader(
@@ -153,7 +153,7 @@ def main():
     num_gpus = int(os.environ["WORLD_SIZE"]
                    ) if "WORLD_SIZE" in os.environ else 1
     args.distributed = num_gpus > 1
-
+    assert args.distributed
     if args.distributed:
         torch.cuda.set_device(args.local_rank)
         torch.distributed.init_process_group(

@@ -5,7 +5,7 @@ import torch
 from mmn.data.datasets.utils import iou, score2d_to_moments_scores
 from mmn.utils.comm import is_main_process
 import json
-
+from time import gmtime,strftime
 
 def nms(moments, scores, thresh):
     scores, ranks = scores.sort(descending=True)
@@ -50,7 +50,8 @@ def evaluate(cfg, dataset, predictions, nms_thresh, recall_metrics=(1, 5)):
             moments = nms(candidates, scores, nms_thresh)
             for i, r in enumerate(recall_metrics):
                 if(r == 1):
-                    result[str(tot)] = [float(moments[:r][0][0]), float(moments[:r][0][1])]
+                    # result[str(tot)] = [float(moments[:r][0][0]), float(moments[:r][0][1])]
+                    result[str(tot)] = [strftime("%H:%M:%S", gmtime(float(moments[:r][0][0]))) , strftime("%H:%M:%S", gmtime(float(moments[:r][0][1])))]
                     tot = tot + 1
                 mious = iou(moments[:r], gt_moment)
                 bools = mious[:, None].expand(r, num_iou_metrics) >= iou_metrics

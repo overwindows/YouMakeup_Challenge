@@ -12,7 +12,7 @@ def iou(A, B):
     return max(min1 - max0, 0) / (max1 - min0)
 
 def toSec(timeStr):
-    t = time.strptime(timeStr, "%H:%M:%S")
+    t = time.strptime(timeStr, "%hh:%mm:%ss")
     return t.tm_hour * 3600 + t.tm_min * 60 + t.tm_sec
 
 def captiondata_modify(steps):
