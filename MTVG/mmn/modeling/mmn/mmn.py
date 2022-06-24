@@ -23,6 +23,11 @@ class MMN(nn.Module):
         self.joint_space_size = cfg.MODEL.MMN.JOINT_SPACE_SIZE
         self.encoder_name = cfg.MODEL.MMN.TEXT_ENCODER.NAME
 
+        W = torch.zeros(2,)
+        self.ELMo_W = nn.Parameter(W)
+        Gamma = torch.ones(1,)
+        self.ELMo_Gamma = nn.Parameter(Gamma)
+
     def forward(self, batches, cur_epoch=1):
         """
         Arguments:
@@ -39,7 +44,17 @@ class MMN(nn.Module):
         feats = self.featpool(batches.feats)  # from pre_num_clip to num_clip with overlapped average pooling, e.g., 256 -> 128
         feats_c3d = self.featpool_c3d(batches.feats_c3d)
         # print(feats.size(), feats_c3d.size())
-        feats = torch.cat((feats,feats_c3d), 1)
+        # feats = torch.cat((feats,feats_c3d), 1)
+        fusion_feats = [feats, feats_c3d]
+        normed_weights = torch.chunk(
+            F.softmax(self.ELMo_W + 1.0 / 2, dim=-1), 2)
+        pieces = []
+
+        for w, t in zip(normed_weights, fusion_feats):
+            pieces.append(w * t)
+
+        sum_pieces = sum(pieces)
+        feats=sum_pieces * self.ELMo_Gamma
         # print(feats.size())
         map2d = self.feat2d(feats)  # use MaxPool1d to generate 2d proposal-level feature map from 1d temporal features
         map2d, map2d_iou = self.proposal_conv(map2d)

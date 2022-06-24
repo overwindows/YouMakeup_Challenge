@@ -23,7 +23,7 @@ class MakeupDataset(torch.utils.data.Dataset):
         self.annos = []
         logger = logging.getLogger("mmn.trainer")
         logger.info("Preparing data, please wait...")
-        tokenizer = DistilBertTokenizer.from_pretrained('distilbert-base-uncased')
+        tokenizer = DistilBertTokenizer.from_pretrained('/apdcephfs/private_chewu/pretrained_models/ft_local/distilbert-base-uncased')
 
         for vid, anno in annos.items():
             duration = float(anno['duration'])  # duration of the video
