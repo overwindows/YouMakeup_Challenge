@@ -7,6 +7,7 @@ class TLGBatch(object):
     # frames: list # [ImageList]
     feats: torch.tensor 
     feats_c3d: torch.tensor
+    feats_i3d: torch.tensor
     queries: list
     wordlens: list
     all_iou2d: list
@@ -16,6 +17,7 @@ class TLGBatch(object):
     def to(self, device):
         self.feats_c3d = self.feats_c3d.to(device)
         self.feats = self.feats.to(device)
+        self.feats_i3d = self.feats_i3d.to(device)
         self.queries = [query.to(device) for query in self.queries]
         self.wordlens = [word_len.to(device) for word_len in self.wordlens]
         self.all_iou2d = [iou2d.to(device) for iou2d in self.all_iou2d]

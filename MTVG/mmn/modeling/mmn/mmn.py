@@ -1,7 +1,7 @@
 import torch
 from torch import nn
 from torch.functional import F
-from .featpool import build_featpool, build_featpool_c3d  # downsample 1d temporal features to desired length
+from .featpool import build_featpool, build_featpool_c3d, build_featpool_i3d  # downsample 1d temporal features to desired length
 from .feat2d import build_feat2d  # use MaxPool1d/Conv1d to generate 2d proposal-level feature map from 1d temporal features
 from .loss import build_contrastive_loss
 from .loss import build_bce_loss
@@ -15,6 +15,7 @@ class MMN(nn.Module):
         self.only_iou_loss_epoch = cfg.SOLVER.ONLY_IOU
         self.featpool = build_featpool(cfg) 
         self.featpool_c3d = build_featpool_c3d(cfg)
+        self.featpool_i3d = build_featpool_i3d(cfg)
         self.feat2d = build_feat2d(cfg)
         self.contrastive_loss = build_contrastive_loss(cfg, self.feat2d.mask2d)
         self.iou_score_loss = build_bce_loss(cfg, self.feat2d.mask2d)
@@ -23,7 +24,7 @@ class MMN(nn.Module):
         self.joint_space_size = cfg.MODEL.MMN.JOINT_SPACE_SIZE
         self.encoder_name = cfg.MODEL.MMN.TEXT_ENCODER.NAME
 
-        W = torch.zeros(2,)
+        W = torch.zeros(3,)
         self.ELMo_W = nn.Parameter(W)
         Gamma = torch.ones(1,)
         self.ELMo_Gamma = nn.Parameter(Gamma)
@@ -41,13 +42,16 @@ class MMN(nn.Module):
         for idx, (iou, sent) in enumerate(zip(ious2d, batches.queries)):
             assert iou.size(0) == sent.size(0)
             assert iou.size(0) == batches.num_sentence[idx]
+        # print(batches.feats.size(),batches.feats_c3d.size())
         feats = self.featpool(batches.feats)  # from pre_num_clip to num_clip with overlapped average pooling, e.g., 256 -> 128
         feats_c3d = self.featpool_c3d(batches.feats_c3d)
+        feats_i3d = self.featpool_i3d(batches.feats_i3d)
+
         # print(feats.size(), feats_c3d.size())
         # feats = torch.cat((feats,feats_c3d), 1)
-        fusion_feats = [feats, feats_c3d]
+        fusion_feats = [feats, feats_c3d, feats_i3d]
         normed_weights = torch.chunk(
-            F.softmax(self.ELMo_W + 1.0 / 2, dim=-1), 2)
+            F.softmax(self.ELMo_W + 1.0 / 3, dim=-1), 3)
         pieces = []
 
         for w, t in zip(normed_weights, fusion_feats):
