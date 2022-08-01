@@ -9,20 +9,23 @@ class DatasetCatalog(object):
         "makeup_train": {
             "video_dir": "./dataset/makeup/videos",
             "ann_file": "./dataset/makeup/makeup_train.json",
-            "feat_file": "/youtu/xlab-team1/shuxiujun/contest/person_in_context/makeup_i3d_rgb_stride_1s.hdf5",
+            "feat_file": "/youtu/xlab-team1/shuxiujun/contest/person_in_context/makeup_videomae_ssv2_rgb_stride_1s.hdf5",
             "feat_swin": "/youtu/xlab-team1/shuxiujun/contest/person_in_context/makeup_videoswin_rgb_stride_1s_k400.hdf5",
+            "feat_i3d": "/youtu/xlab-team1/shuxiujun/contest/person_in_context/makeup_i3d_rgb_stride_1s.hdf5"
         },
         "makeup_val": {
             "video_dir": "./dataset/makeup/videos",
             "ann_file": "./dataset/makeup/makeup_val.json",
-            "feat_file": "/youtu/xlab-team1/shuxiujun/contest/person_in_context/makeup_i3d_rgb_stride_1s.hdf5",
+            "feat_file": "/youtu/xlab-team1/shuxiujun/contest/person_in_context/makeup_videomae_ssv2_rgb_stride_1s.hdf5",
             "feat_swin":  "/youtu/xlab-team1/shuxiujun/contest/person_in_context/makeup_videoswin_rgb_stride_1s_k400.hdf5",
+            "feat_i3d": "/youtu/xlab-team1/shuxiujun/contest/person_in_context/makeup_i3d_rgb_stride_1s.hdf5"
         },
         "makeup_test": {
             "video_dir": "./dataset/makeup/videos",
             "ann_file": "./dataset/makeup/makeup_test.json",
-            "feat_file": "/youtu/xlab-team1/shuxiujun/contest/person_in_context/makeup_i3d_rgb_stride_1s.hdf5",
-            "feat_swin":  "/youtu/xlab-team1/shuxiujun/contest/person_in_context/makeup_videoswin_rgb_stride_1s_k400.hdf5"
+            "feat_file": "/youtu/xlab-team1/shuxiujun/contest/person_in_context/makeup_videomae_ssv2_rgb_stride_1s.hdf5",
+            "feat_swin":  "/youtu/xlab-team1/shuxiujun/contest/person_in_context/makeup_videoswin_rgb_stride_1s_k400.hdf5",
+            "feat_i3d": "/youtu/xlab-team1/shuxiujun/contest/person_in_context/makeup_i3d_rgb_stride_1s.hdf5"
         }
     }
 
@@ -34,6 +37,7 @@ class DatasetCatalog(object):
             feat_swin=os.path.join(data_dir, attrs["feat_swin"]),
             ann_file=os.path.join(data_dir, attrs["ann_file"]),
             feat_file=os.path.join(data_dir, attrs["feat_file"]),
+            feat_i3d=os.path.join(data_dir, attrs["feat_i3d"]),
         )
         if "tacos" in name:
             return dict(
