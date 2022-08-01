@@ -27,7 +27,7 @@ The hdf5 files should be put into folder `./dataset/makeup`.
 2.Prepare caption data
 
 **Annotations of videos** on train/val set are [here](https://drive.google.com/drive/folders/1vKTZh8eDAJYAtD6AYa7606xu74azd2iY?usp=sharing) or [BaiduNetDisk](https://pan.baidu.com/s/16JUlUoOHDqhuQy9W-0n2kg), password:31jo.
-Caption data has been provided in folder `./dataset/makeup`.
+Caption data has been provided in folder `./dataset/makeup`. 
 
 ```bash
 #Caption data has been provided. You don't have to run this code.
