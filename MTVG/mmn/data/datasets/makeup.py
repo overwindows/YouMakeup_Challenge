@@ -7,26 +7,16 @@ from transformers import RobertaTokenizer
 
 class MakeupDataset(torch.utils.data.Dataset):
 
-<<<<<<< HEAD
-    def __init__(self, ann_file, feat_file, feat_swin, num_pre_clips, num_clips):
-=======
     def __init__(self, ann_file, feat_file, feat_swin, feat_i3d, num_pre_clips, num_clips):
->>>>>>> fae7bfe34e767357831b773f13365591180e0292
         super(MakeupDataset, self).__init__()
         print("*********")
         print(feat_file)
         print(feat_swin)
-<<<<<<< HEAD
-        print("*********")
-        self.feat_file = feat_file
-        self.feat_swin = feat_swin
-=======
         print(feat_i3d)
         print("*********")
         self.feat_file = feat_file
         self.feat_swin = feat_swin
         self.feat_i3d = feat_i3d
->>>>>>> fae7bfe34e767357831b773f13365591180e0292
 
         self.num_pre_clips = num_pre_clips
         with open(ann_file,'r') as f:
@@ -80,11 +70,7 @@ class MakeupDataset(torch.utils.data.Dataset):
         wordlen = self.annos[idx]['wordlen']
         iou2d = self.annos[idx]['iou2d']
         moment = self.annos[idx]['moment']
-<<<<<<< HEAD
-        return feat, feat_swin, query, wordlen, iou2d, moment, len(self.annos[idx]['sentence']),idx
-=======
         return feat, feat_swin, feat_i3d, query, wordlen, iou2d, moment, len(self.annos[idx]['sentence']),idx
->>>>>>> fae7bfe34e767357831b773f13365591180e0292
 
     def __len__(self):
         return len(self.annos)
