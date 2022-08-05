@@ -1,13 +1,13 @@
 # find all configs in configs/
 config_file=configs/pool_makeup_i3d.yaml
 # the dir of the saved weight
-weight_dir=outputs/pool_makeup_i3d
+weight_dir=/apdcephfs/share_1351585/Youmakeup_Challenge2022/MTVG/outputs/pool_makeup_i3d_20220804/
 # select weight to evaluate
-weight_file=outputs/pool_makeup_i3d/pool_model_33e.pth
+weight_file=/apdcephfs/share_1351585/Youmakeup_Challenge2022/MTVG/outputs/pool_makeup_i3d_20220804/pool_model_32e.pth
 # test batch size
 batch_size=16
 # set your gpu id
-gpus=3
+gpus=0
 # number of gpus
 gpun=1
 # please modify it with different value (e.g., 127.0.0.2, 29502) when you run multi mmn task on the same machine

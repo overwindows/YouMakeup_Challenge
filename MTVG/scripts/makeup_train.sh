@@ -9,8 +9,8 @@ master_addr=127.0.0.1
 master_port=8211
 
 # ------------------------ need not change -----------------------------------
-config_file=/youtu/xlab-team1/chewu/Youmakeup_Challenge2022/MTVG/configs/$config\.yaml
-output_dir=/apdcephfs/private_chewu/Youmakeup_Challenge2022/MTVG/outputs/${config}_v5
+config_file=/apdcephfs/private_chewu/Youmakeup_Challenge2022/MTVG/configs/$config\.yaml
+output_dir=/apdcephfs/share_1351585/Youmakeup_Challenge2022/MTVG/outputs/${config}_20220804
 
 CUDA_VISIBLE_DEVICES=$gpus python3 -m torch.distributed.launch \
 --nproc_per_node=$gpun --master_addr $master_addr --master_port $master_port train_net.py --config-file $config_file OUTPUT_DIR $output_dir \
