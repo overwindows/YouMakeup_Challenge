@@ -16,6 +16,7 @@ def captiondata_modify(steps):
     for i, step in enumerate(steps[0]):
         tmp_dic = {} #keys = ["duration", "timestamps", "sentences"]
         name = step["video_id"]
+        # print(step['title'])
         #duration
         tmp_dic["duration"] = step["duration"]
         #timestamps & sentences
