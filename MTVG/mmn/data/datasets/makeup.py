@@ -7,18 +7,16 @@ from transformers import RobertaTokenizer
 
 class MakeupDataset(torch.utils.data.Dataset):
 
-    def __init__(self, ann_file, feat_mae, feat_swin, feat_i3d, feat_c3d, num_pre_clips, num_clips):
+    def __init__(self, ann_file, feat_mae, feat_swin, feat_i3d, num_pre_clips, num_clips):
         super(MakeupDataset, self).__init__()
         print("*********")
         print(feat_mae)
         print(feat_swin)
         print(feat_i3d)
-        print(feat_c3d)
         print("*********")
         self.feat_mae = feat_mae
         self.feat_swin = feat_swin
         self.feat_i3d = feat_i3d
-        self.feat_c3d = feat_c3d
 
         self.num_pre_clips = num_pre_clips
         with open(ann_file, 'r') as f:
@@ -78,9 +76,8 @@ class MakeupDataset(torch.utils.data.Dataset):
         wordlen = self.annos[idx]['wordlen']
         iou2d = self.annos[idx]['iou2d']
         moment = self.annos[idx]['moment']
-        feat_c3d = get_vid_feat(
-            self.feat_c3d, self.annos[idx]['vid'], self.num_pre_clips, dataset_name="c3d")
-        return feat_mae, feat_swin, feat_i3d, query, wordlen, iou2d, moment, len(self.annos[idx]['sentence']), idx, feat_c3d
+
+        return feat_mae, feat_swin, feat_i3d, query, wordlen, iou2d, moment, len(self.annos[idx]['sentence']), idx
 
     def __len__(self):
         return len(self.annos)

@@ -10,7 +10,7 @@ class TLGBatch(object):
     feats_mae: torch.tensor
     feats_swin: torch.tensor
     feats_i3d: torch.tensor
-    feats_c3d: torch.tensor
+    # feats_c3d: torch.tensor
     queries: list
     wordlens: list
     all_iou2d: list

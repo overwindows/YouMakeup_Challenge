@@ -7,21 +7,18 @@ class DatasetCatalog(object):
 
     DATASETS = {
         "makeup_train": {
-            "feat_c3d": "/youtu/xlab-team1/shuxiujun/contest/person_in_context/makeup_c3d_rgb_stride_1s.hdf5",
             "ann_file": "./dataset/makeup/makeup_train.json",
             "feat_mae": "/youtu/xlab-team1/shuxiujun/contest/person_in_context/makeup_videomae_ssv2_rgb_stride_1s.hdf5",
             "feat_swin": "/youtu/xlab-team1/shuxiujun/contest/person_in_context/makeup_videoswin_rgb_stride_1s_k400.hdf5",
             "feat_i3d": "/youtu/xlab-team1/shuxiujun/contest/person_in_context/makeup_i3d_rgb_stride_1s.hdf5",
         },
         "makeup_val": {
-            "feat_c3d": "/youtu/xlab-team1/shuxiujun/contest/person_in_context/makeup_c3d_rgb_stride_1s.hdf5",
             "ann_file": "./dataset/makeup/makeup_val.json",
             "feat_mae": "/youtu/xlab-team1/shuxiujun/contest/person_in_context/makeup_videomae_ssv2_rgb_stride_1s.hdf5",
             "feat_swin":  "/youtu/xlab-team1/shuxiujun/contest/person_in_context/makeup_videoswin_rgb_stride_1s_k400.hdf5",
             "feat_i3d": "/youtu/xlab-team1/shuxiujun/contest/person_in_context/makeup_i3d_rgb_stride_1s.hdf5",
         },
         "makeup_test": {
-            "feat_c3d": "/youtu/xlab-team1/shuxiujun/contest/person_in_context/makeup_c3d_rgb_stride_1s.hdf5",
             "ann_file": "./dataset/makeup/makeup_test.json",
             "feat_mae": "/youtu/xlab-team1/shuxiujun/contest/person_in_context/makeup_videomae_ssv2_rgb_stride_1s.hdf5",
             "feat_swin":  "/youtu/xlab-team1/shuxiujun/contest/person_in_context/makeup_videoswin_rgb_stride_1s_k400.hdf5",
@@ -38,7 +35,7 @@ class DatasetCatalog(object):
             ann_file=os.path.join(data_dir, attrs["ann_file"]),
             feat_mae=os.path.join(data_dir, attrs["feat_mae"]),
             feat_i3d=os.path.join(data_dir, attrs["feat_i3d"]),
-            feat_c3d=os.path.join(data_dir, attrs["feat_c3d"]),
+            # feat_c3d=os.path.join(data_dir, attrs["feat_c3d"]),
         )
         if "tacos" in name:
             return dict(
